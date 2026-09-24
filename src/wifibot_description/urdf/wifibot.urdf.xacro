@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<robot name="wifibot_lab_v4" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Main Wifibot chassis -->
+  <xacro:include filename="$(find wifibot_description)/urdf/wifibot_base.xacro"/>
+
+  <!-- Simulated ZED 2i style camera -->
+  <xacro:include filename="$(find wifibot_description)/urdf/simulated_zed2i.xacro"/>
+
+</robot>

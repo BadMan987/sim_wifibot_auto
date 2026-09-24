@@ -1,0 +1,18 @@
+# ROS 2 编译和日志文件
+build/
+install/
+log/
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 编辑器配置
+.vscode/
+.idea/
+src/wifibot_navigation/maps/indoor/rtabmap.db
+*.db
+*.sqlite
+src/wifibot_navigation/maps/indoor/rtabmap.db
+src/wifibot_navigation/maps/indoor/rtabmap.db
+*.db

@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Approximate ZED 2i geometry and mounting pose -->
+  <xacro:property name="camera_x" value="0.18"/>
+  <xacro:property name="camera_y" value="0.00"/>
+  <xacro:property name="camera_z" value="0.13"/>
+  <xacro:property name="camera_length" value="0.12"/>
+  <xacro:property name="camera_width" value="0.035"/>
+  <xacro:property name="camera_height" value="0.035"/>
+  <xacro:property name="camera_mass" value="0.15"/>
+  <xacro:property name="stereo_half_baseline" value="0.06"/>
+
+  <!-- Physical camera body -->
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${camera_length} ${camera_width} ${camera_height}"/>
+      </geometry>
+      <material name="camera_dark">
+        <color rgba="0.01 0.01 0.01 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${camera_length} ${camera_width} ${camera_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="${camera_mass}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.00005" ixy="0.0" ixz="0.0"
+               iyy="0.00015" iyz="0.0" izz="0.00015"/>
+    </inertial>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="${camera_x} ${camera_y} ${camera_z}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Center optical frame: Z forward, X right, Y down -->
+  <link name="camera_optical_frame"/>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
+  </joint>
+
+  <!-- Physical left and right camera frames -->
+  <link name="camera_left_link"/>
+  <joint name="camera_left_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_left_link"/>
+    <origin xyz="0 ${stereo_half_baseline} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="camera_right_link"/>
+  <joint name="camera_right_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_right_link"/>
+    <origin xyz="0 ${-stereo_half_baseline} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="camera_left_optical_frame"/>
+  <joint name="camera_left_optical_joint" type="fixed">
+    <parent link="camera_left_link"/>
+    <child link="camera_left_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
+  </joint>
+
+  <link name="camera_right_optical_frame"/>
+  <joint name="camera_right_optical_joint" type="fixed">
+    <parent link="camera_right_link"/>
+    <child link="camera_right_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
+  </joint>
+
+  <!-- IMU frame -->
+  <link name="camera_imu_link"/>
+  <joint name="camera_imu_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_imu_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- RGB-D sensor. One depth sensor provides RGB, depth and point cloud. -->
+  <gazebo reference="camera_link">
+    <sensor name="zed2i_rgbd_sensor" type="depth">
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>30.0</update_rate>
+      <camera name="zed2i_rgbd_camera">
+        <horizontal_fov>1.57079632679</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.10</near>
+          <far>20.0</far>
+        </clip>
+      </camera>
+      <plugin name="zed2i_rgbd_ros_plugin" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>/camera</namespace>
+          <remapping>image_raw:=color/image_raw</remapping>
+          <remapping>camera_info:=color/camera_info</remapping>
+          <remapping>depth/image_raw:=depth/image_raw</remapping>
+          <remapping>depth/camera_info:=depth/camera_info</remapping>
+          <remapping>points:=depth/points</remapping>
+        </ros>
+        <camera_name>zed2i</camera_name>
+        <frame_name>camera_optical_frame</frame_name>
+        <min_depth>0.10</min_depth>
+        <max_depth>20.0</max_depth>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Simulated IMU -->
+  <gazebo reference="camera_imu_link">
+    <sensor name="zed2i_imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>200.0</update_rate>
+      <visualize>false</visualize>
+      <imu>
+        <angular_velocity>
+          <x><noise type="gaussian"><mean>0.0</mean><stddev>0.0002</stddev></noise></x>
+          <y><noise type="gaussian"><mean>0.0</mean><stddev>0.0002</stddev></noise></y>
+          <z><noise type="gaussian"><mean>0.0</mean><stddev>0.0002</stddev></noise></z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x><noise type="gaussian"><mean>0.0</mean><stddev>0.017</stddev></noise></x>
+          <y><noise type="gaussian"><mean>0.0</mean><stddev>0.017</stddev></noise></y>
+          <z><noise type="gaussian"><mean>0.0</mean><stddev>0.017</stddev></noise></z>
+        </linear_acceleration>
+      </imu>
+      <plugin name="zed2i_imu_ros_plugin" filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <namespace>/</namespace>
+          <remapping>~/out:=imu/data</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>
