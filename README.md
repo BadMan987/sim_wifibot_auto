@@ -3,6 +3,26 @@
 Ceci est un projet de simulation de navigation autonome et de patrouille pour un robot Wifibot développé sous **ROS 2**. Le projet intègre la simulation physique Gazebo, la localisation et la cartographie RTAB-Map, la planification de chemin globale A* personnalisée, le suivi de chemin Pure Pursuit, ainsi qu'un mécanisme de prévention des collisions et de protection de la sécurité basé sur la caméra de profondeur ZED 2i.
 
 ---
+---
+
+## 🦾 Version ARM64 — Branche `stereolabs-arm64`
+
+Cette branche est spécialement adaptée à une plateforme basée sur l'architecture **ARM64**.
+
+Elle contient les modifications et configurations nécessaires pour exécuter le projet Wifibot dans l'environnement ARM64, notamment avec une configuration Gazebo compatible avec cette plateforme.
+
+> **Remarque :** cette branche est différente de la branche `main`, qui correspond à l'environnement AMD64/x86_64 d'origine.
+
+### 🚀 Lancement du système
+
+Placez-vous à la racine de l'espace de travail :
+
+```bash
+cd ~/wifibot_ws
+
+
+
+
 
 ## 📂 Structure de l'espace de travail (`src/`)
 
