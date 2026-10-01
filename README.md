@@ -134,23 +134,19 @@ ros2 launch wifibot_gazebo simulation.launch.py
 source /opt/ros/humble/setup.bash
 source ~/wifibot_ws/install/setup.bash
 
-ros2 launch rtabmap_launch rtabmap.launch.py \
-    database_path:=/home/yz0000/wifibot_ws/src/wifibot_navigation/maps/indoor/rtabmap.db \
-    rgb_topic:=/camera/zed2i/image_raw \
-    depth_topic:=/camera/zed2i/depth/image_raw \
-    camera_info_topic:=/camera/zed2i/camera_info \
-    frame_id:=base_link \
-    odom_topic:=/odom \
-    subscribe_odom:=true \
-    visual_odometry:=false \
-    approx_sync:=true \
-    use_sim_time:=true \
-    rtabmap_args:="\
---Mem/IncrementalMemory false \
---Mem/InitWMWithAllNodes true \
---RGBD/StartAtOrigin true \
---Reg/Force3DoF true \
---Optimizer/GravitySigma 0"
+cp /home/yz0000/wifibot_ws/src/wifibot_navigation/maps/indoor/rtabmap_clean.db /home/yz0000/wifibot_ws/src/wifibot_navigation/maps/indoor/rtabmap.db
+
+ros2 launch rtabmap_launch rtabmap.launch.py    database_path:=/home/yz0000/wifibot_ws/src/wifibot_navigation/maps/indoor/rtabmap.db    rgb_topic:=/camera/zed2i/image_raw    depth_topic:=/camera/zed2i/depth/image_raw    camera_info_topic:=/camera/zed2i/depth/camera_info    frame_id:=base_link    odom_topic:=/odom    subscribe_odom:=true    visual_odometry:=false    approx_sync:=true    use_sim_time:=true    map_always_update:=true    subscribe_depth:=true    rtabmap_args:="\
+   --Mem/IncrementalMemory true \
+   --Mem/InitWMWithAllNodes true \
+   --RGBD/StartAtOrigin true \
+   --Reg/Force3DoF true \
+   --Optimizer/GravitySigma 0 \
+   --Grid/Sensor true \
+   --Grid/MaxObstacleHeight 1.5 \
+   --Grid/MinObstacleHeight 0.05 \
+   --Grid/RayTracing true \
+   --Grid/FromDepth true"
 
 ```
 
@@ -165,6 +161,10 @@ python3 ~/wifibot_ws/src/wifibot_patrol/wifibot_patrol/astar.py
 
 ```bash
 python3 ~/wifibot_ws/src/wifibot_patrol/wifibot_patrol/safety_guard.py
+
+or for the new branche
+python3 ~/wifibot_ws/src/wifibot_patrol/wifibot_patrol/smart_bypass_guard.py
+
 
 
 
@@ -311,23 +311,19 @@ ros2 launch wifibot_gazebo simulation.launch.py
 source /opt/ros/humble/setup.bash
 source ~/wifibot_ws/install/setup.bash
 
-ros2 launch rtabmap_launch rtabmap.launch.py \
-    database_path:=/home/yz0000/wifibot_ws/src/wifibot_navigation/maps/indoor/rtabmap.db \
-    rgb_topic:=/camera/zed2i/image_raw \
-    depth_topic:=/camera/zed2i/depth/image_raw \
-    camera_info_topic:=/camera/zed2i/camera_info \
-    frame_id:=base_link \
-    odom_topic:=/odom \
-    subscribe_odom:=true \
-    visual_odometry:=false \
-    approx_sync:=true \
-    use_sim_time:=true \
-    rtabmap_args:="\
---Mem/IncrementalMemory false \
---Mem/InitWMWithAllNodes true \
---RGBD/StartAtOrigin true \
---Reg/Force3DoF true \
---Optimizer/GravitySigma 0"
+cp /home/yz0000/wifibot_ws/src/wifibot_navigation/maps/indoor/rtabmap_clean.db /home/yz0000/wifibot_ws/src/wifibot_navigation/maps/indoor/rtabmap.db
+
+ros2 launch rtabmap_launch rtabmap.launch.py    database_path:=/home/yz0000/wifibot_ws/src/wifibot_navigation/maps/indoor/rtabmap.db    rgb_topic:=/camera/zed2i/image_raw    depth_topic:=/camera/zed2i/depth/image_raw    camera_info_topic:=/camera/zed2i/depth/camera_info    frame_id:=base_link    odom_topic:=/odom    subscribe_odom:=true    visual_odometry:=false    approx_sync:=true    use_sim_time:=true    map_always_update:=true    subscribe_depth:=true    rtabmap_args:="\
+   --Mem/IncrementalMemory true \
+   --Mem/InitWMWithAllNodes true \
+   --RGBD/StartAtOrigin true \
+   --Reg/Force3DoF true \
+   --Optimizer/GravitySigma 0 \
+   --Grid/Sensor true \
+   --Grid/MaxObstacleHeight 1.5 \
+   --Grid/MinObstacleHeight 0.05 \
+   --Grid/RayTracing true \
+   --Grid/FromDepth true"
 
 ```
 
@@ -342,6 +338,8 @@ python3 ~/wifibot_ws/src/wifibot_patrol/wifibot_patrol/astar.py
 
 ```bash
 python3 ~/wifibot_ws/src/wifibot_patrol/wifibot_patrol/safety_guard.py
+新版本
+python3 ~/wifibot_ws/src/wifibot_patrol/wifibot_patrol/smart_bypass_guard.py
 
 ```
 
